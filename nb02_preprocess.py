@@ -58,18 +58,22 @@ def tune_parameters(slide_path: Path) -> dict:
     Show an interactive slider window for one slide.
     Returns the chosen parameters.
     """
+    print("loading tif...")
     img = load_tif(slide_path)
+    print("tif loaded!")
     params = {
         "bg_radius": PP_CFG["background_subtraction_radius"],
         "sigma":     PP_CFG["gaussian_sigma"],
     }
 
     # Use DAPI for preview (usually clearest signal)
+    print("normalizing channels...")
     raw = normalize_channel(
         extract_channel(img, ch_map["DAPI"]),
         PP_CFG["normalize_percentile_low"],
         PP_CFG["normalize_percentile_high"],
     )
+    print("normalized channels!")
 
     fig, axes = plt.subplots(1, 2, figsize=(12, 5))
     plt.subplots_adjust(bottom=0.25)
@@ -79,6 +83,8 @@ def tune_parameters(slide_path: Path) -> dict:
     im1 = axes[1].imshow(raw, cmap="gray", vmin=0, vmax=1)
     for ax in axes:
         ax.axis("off")
+
+    print("Created plot!")
 
     ax_rad = plt.axes([0.15, 0.12, 0.65, 0.03])
     ax_sig = plt.axes([0.15, 0.06, 0.65, 0.03])
