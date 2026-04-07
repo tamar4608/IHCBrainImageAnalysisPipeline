@@ -1,0 +1,20 @@
+name: ihc_pipeline
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - numpy
+  - scipy
+  - matplotlib
+  - pillow
+  - tifffile
+  - pyyaml
+  - ipykernel
+  - jupyterlab
+  - openpyxl
+  - pip:
+      - cellpose
+      - SimpleITK
+      - bg-atlasapi

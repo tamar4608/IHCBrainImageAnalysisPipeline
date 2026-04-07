@@ -1,0 +1,68 @@
+# IHC Pipeline Configuration
+# Orexin / cFOS Co-localization in Mouse Brain Sections
+
+# ── Paths ──────────────────────────────────────────────────────────────────────
+paths:
+  raw_images:      "/home/tamar/PycharmProjects/IHCBrainImageAnalysisPipeline/brain/_01.vsi.Collection"
+  processed:       "data/processed"
+  results:         "data/results"
+  session:         "session"
+  brainglobe_home: "brainglobe_cache"
+
+# ── Channel mapping ────────────────────────────────────────────────────────────
+channels:
+  DAPI:   0   # index 0 — total cell nuclei
+  GFP:    1   # index 1 — Orexin (hypocretin) neurons
+  Cy5:    2   # index 2 — cFOS (neuronal activation)
+
+# ── Preprocessing ──────────────────────────────────────────────────────────────
+preprocessing:
+  background_subtraction_radius: 50   # pixels; rolling-ball radius
+  gaussian_sigma: 1.0                 # light smoothing
+  normalize_percentile_low:  1.0
+  normalize_percentile_high: 99.9
+
+# ── Atlas registration ─────────────────────────────────────────────────────────
+atlas:
+  name: "allen_mouse_25um"
+  ap_range: [400, 700]               # typical hypothalamic AP range in 25 µm atlas
+
+# ── Cell detection (Cellpose) ──────────────────────────────────────────────────
+cellpose:
+  DAPI:
+    model:    "nuclei"
+    diameter: 15                     # px
+    flow_threshold: 0.4
+    cellprob_threshold: 0.0
+    min_size: 50
+    max_size: 2000
+    intensity_threshold: 0.1
+  GFP:
+    model:    "cyto2"
+    diameter: 25
+    flow_threshold: 0.4
+    cellprob_threshold: 0.0
+    min_size: 100
+    max_size: 5000
+    intensity_threshold: 0.08
+  Cy5:
+    model:    "nuclei"
+    diameter: 15
+    flow_threshold: 0.4
+    cellprob_threshold: 0.0
+    min_size: 50
+    max_size: 2000
+    intensity_threshold: 0.12
+
+# ── Co-localization ────────────────────────────────────────────────────────────
+coloc:
+  distance_threshold_um: 10.0        # µm; centroid-to-centroid max distance
+
+# ── Target brain regions ───────────────────────────────────────────────────────
+regions:
+  - {acronym: LHA, name: "Lateral Hypothalamic Area",       priority: primary}
+  - {acronym: PeF, name: "Perifornical Area",               priority: primary}
+  - {acronym: DMH, name: "Dorsomedial Hypothalamic Nucleus", priority: secondary}
+  - {acronym: VMH, name: "Ventromedial Hypothalamic Nucleus",priority: secondary}
+  - {acronym: ARC, name: "Arcuate Hypothalamic Nucleus",    priority: secondary}
+  - {acronym: ZI,  name: "Zona Incerta",                    priority: context}
